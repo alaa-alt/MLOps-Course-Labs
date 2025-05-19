@@ -5,11 +5,12 @@ for bank consumer churn prediction.
 
 import mlflow.models
 import mlflow.sklearn
+import mlflow.xgboost
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.utils import resample
 from sklearn.model_selection import train_test_split
-from sklearn.svm import SVC
+from xgboost import XGBClassifier
 from sklearn.compose import make_column_transformer
 from sklearn.preprocessing import OneHotEncoder,  StandardScaler
 from sklearn.metrics import (
@@ -125,18 +126,18 @@ def train(X_train, y_train):
     Returns:
         LogisticRegression: trained logistic regression model
     """
-    log_svm = SVC(kernel='rbf', C=1.0, random_state=1234)
-    log_svm.fit(X_train, y_train)
+    log_xgboost = XGBClassifier(n_estimators=100, learning_rate=0.1, max_depth=4, random_state=42)
+    log_xgboost.fit(X_train, y_train)
 
     ### Log the model with the input and output schema
     # Infer signature (input and output schema)
     signature = mlflow.models.infer_signature(X_train, y_train)
     # Log model
-    mlflow.sklearn.log_model(sk_model=log_svm, artifact_path="model", signature=signature)
+    mlflow.xgboost.log_model(log_xgboost, "model", signature=signature)
 
     ### Log the data
     mlflow.log_artifact("dataset/Churn_Modelling.csv")
-    return log_svm
+    return log_xgboost
 
 
 def main():
@@ -147,7 +148,7 @@ def main():
     mlflow.set_experiment("Churn Prediction")
 
     ### Start a new run and leave all the main function code as part of the experiment
-    mlflow.start_run(run_name="SVM")
+    mlflow.start_run(run_name="XGBoost")
     print("loading data...")
     df = pd.read_csv("dataset/Churn_Modelling.csv")
     col_transf, X_train, X_test, y_train, y_test = preprocess(df)
@@ -173,7 +174,7 @@ def main():
     mlflow.log_metric("f1", f1)
 
     ### Log tag
-    mlflow.set_tag("model", "SVM")
+    mlflow.set_tag("model", "XGBoost")
 
     
     conf_mat = confusion_matrix(y_test, y_pred, labels=model.classes_)
