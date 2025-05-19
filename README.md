@@ -1,4 +1,3 @@
-```markdown
 # Bank Customer Churn Prediction (Research Branch)
 
 This branch is dedicated to experimentation and research on churn prediction using various machine learning models. The focus is on comparing model performance and MLflow-based tracking for reproducibility and analysis.
@@ -26,7 +25,7 @@ Install dependencies with:
 
 ```bash
 pip install -r requirements.txt
-````
+```
 
 Contents of `requirements.txt`:
 
