@@ -9,7 +9,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.utils import resample
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
 from sklearn.compose import make_column_transformer
 from sklearn.preprocessing import OneHotEncoder,  StandardScaler
 from sklearn.metrics import (
@@ -125,18 +125,18 @@ def train(X_train, y_train):
     Returns:
         LogisticRegression: trained logistic regression model
     """
-    log_reg = LogisticRegression(max_iter=1000)
-    log_reg.fit(X_train, y_train)
+    log_svm = SVC(kernel='rbf', C=1.0, random_state=1234)
+    log_svm.fit(X_train, y_train)
 
     ### Log the model with the input and output schema
     # Infer signature (input and output schema)
     signature = mlflow.models.infer_signature(X_train, y_train)
     # Log model
-    mlflow.sklearn.log_model(sk_model=log_reg, artifact_path="model", signature=signature)
+    mlflow.sklearn.log_model(sk_model=log_svm, artifact_path="model", signature=signature)
 
     ### Log the data
     mlflow.log_artifact("dataset/Churn_Modelling.csv")
-    return log_reg
+    return log_svm
 
 
 def main():
@@ -147,8 +147,8 @@ def main():
     mlflow.set_experiment("Churn Prediction")
 
     ### Start a new run and leave all the main function code as part of the experiment
-    mlflow.start_run(run_name="logistic_regression")
-    print("loadi`ng data...")
+    mlflow.start_run(run_name="SVM")
+    print("loading data...")
     df = pd.read_csv("dataset/Churn_Modelling.csv")
     col_transf, X_train, X_test, y_train, y_test = preprocess(df)
 
@@ -173,7 +173,7 @@ def main():
     mlflow.log_metric("f1", f1)
 
     ### Log tag
-    mlflow.set_tag("model", "Logistic Regression")
+    mlflow.set_tag("model", "SVM")
 
     
     conf_mat = confusion_matrix(y_test, y_pred, labels=model.classes_)

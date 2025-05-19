@@ -1,0 +1,15 @@
+artifact_uri: mlflow-artifacts:/869502006583093661/6b9ff16ef1a74fbab6e90332cc10c6e8/artifacts
+end_time: 1747645359681
+entry_point_name: ''
+experiment_id: '869502006583093661'
+lifecycle_stage: active
+run_id: 6b9ff16ef1a74fbab6e90332cc10c6e8
+run_name: SVM
+run_uuid: 6b9ff16ef1a74fbab6e90332cc10c6e8
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1747645328156
+status: 3
+tags: []
+user_id: alaa6
