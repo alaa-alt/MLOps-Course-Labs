@@ -1,0 +1,14 @@
+aliases: []
+creation_timestamp: 1747661115336
+current_stage: Staging
+description: ''
+last_updated_timestamp: 1747661268659
+name: SVM Version 1.0.0
+run_id: 6b9ff16ef1a74fbab6e90332cc10c6e8
+run_link: ''
+source: mlflow-artifacts:/869502006583093661/6b9ff16ef1a74fbab6e90332cc10c6e8/artifacts/model
+status: READY
+status_message: null
+storage_location: mlflow-artifacts:/869502006583093661/6b9ff16ef1a74fbab6e90332cc10c6e8/artifacts/model
+user_id: null
+version: 1
