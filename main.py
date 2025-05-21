@@ -5,6 +5,7 @@ import pandas as pd
 import joblib
 import logging
 import uvicorn
+from prometheus_fastapi_instrumentator import Instrumentator
 
 logging.basicConfig(
     level=logging.INFO,
@@ -17,6 +18,9 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
+instrumentator = Instrumentator()
+instrumentator.instrument(app).expose(app)
+
 model = xgb.Booster()
 model.load_model("model.xgb")
 logger.info("Model loaded successfully.")

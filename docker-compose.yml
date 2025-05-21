@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  fastapi:
+    build: .
+    container_name: fastapi_app
+    ports:
+      - "8000:8000"
+    networks:
+      - app-network
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+    networks:
+      - app-network
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
+networks:
+  app-network:
+
+volumes:
+  grafana-storage:

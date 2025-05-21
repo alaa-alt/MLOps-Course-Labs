@@ -5,3 +5,4 @@ xgboost
 pandas
 joblib
 scikit-learn
+prometheus-fastapi-instrumentator
