@@ -1,0 +1,67 @@
+name: CI/CD Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      IMAGE_REPO_NAME: churn-prediction
+      IMAGE_TAG: alaa-597
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Unit Tests
+        run: |
+          pytest
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Log in to Amazon ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build Docker image
+        run: |
+          IMAGE_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ env.IMAGE_REPO_NAME }}
+          docker build -t $IMAGE_URI:${{ env.IMAGE_TAG }} .
+
+      - name: Push Docker image to ECR
+        run: |
+          IMAGE_URI=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ env.IMAGE_REPO_NAME }}
+          docker push $IMAGE_URI:${{ env.IMAGE_TAG }}
+
+      - name: Deploy to EC2 via SSH (decoded key)
+        run: |
+          echo "${{ secrets.EC2_PRIVATE_KEY_BASE64 }}" | base64 -d > key.pem
+          chmod 600 key.pem
+          ssh -o StrictHostKeyChecking=no -i key.pem ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            rm -rf ~/alaa || true
+            mkdir -p ~/alaa
+            cd ~/alaa
+            git clone --depth 1 https://github.com/alaa-alt/MLOps-Course-Labs.git
+            cd MLOps-Course-Labs
+            docker compose pull
+            docker compose down || true
+            docker compose up -d
+EOF
