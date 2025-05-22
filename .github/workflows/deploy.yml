@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      AWS_REGION: us-east-1
-      AWS_ACCOUNT_ID: 60795916912
+      AWS_REGION: ${{ secrets.AWS_REGION }}
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
       IMAGE_REPO_NAME: churn-prediction
       IMAGE_TAG: alaa-597
 
