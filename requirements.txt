@@ -7,3 +7,4 @@ scikit-learn
 prometheus-fastapi-instrumentator
 pytest
 httpx
+pandas
